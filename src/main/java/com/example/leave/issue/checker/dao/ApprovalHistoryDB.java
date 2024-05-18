@@ -17,7 +17,7 @@ public class ApprovalHistoryDB {
             throw new RuntimeException(e);
         }
     }
-    public List<LeaveAttendance> fetchLeaveAttendance(){
+    public List<LeaveAttendance> fetchLeaveAttendance(String startDate, String endDate){
         List<LeaveAttendance> leaveAttendances = new ArrayList<>();
         String query = "SELECT\n" +
                 "        *\n" +
@@ -28,7 +28,7 @@ public class ApprovalHistoryDB {
                 "    status_flg,\n" +
                 "    WF_ITEM_KEY,\n" +
                 "    hdr.creation_date,\n" +
-                "    employee_number emp_id,\n" +
+                "    employee_number,\n" +
                 "    leave_start_date,\n" +
                 "    leave_end_date,\n" +
                 "    leave_type\n" +
@@ -64,7 +64,7 @@ public class ApprovalHistoryDB {
                 "       WORKING_DAY,\n" +
                 "       CASE WHEN STATUS='P' THEN 'Present' WHEN STATUS ='H' THEN 'Holiday' WHEN STATUS='LV' THEN 'Leave' WHEN STATUS='A' THEN 'Absent' WHEN STATUS='L' THEN 'Late' \n" +
                 "       WHEN STATUS='O' THEN 'Offday' ELSE NULL END AS STATUS,\n" +
-                "       Leave_Type action_status\n" +
+                "       Leave_Type\n" +
                 "--       LOCATION_CODE,\n" +
                 "--       PAYROLL_NAME,\n" +
                 "--      VAL\n" +
@@ -158,17 +158,11 @@ public class ApprovalHistoryDB {
                 "                 AND PAAF.PERSON_ID = XESD.PERSON_ID\n" +
                 "--               AND TRIM (XESD.WORKING_DATE) BETWEEN TO_DATE ('$from_date', 'YYYY-MM-DD')\n" +
                 "--                             AND TO_DATE ('$to_date', 'YYYY-MM-DD')\n" +
-                "                 AND TRUNC (XESD.WORKING_DATE) BETWEEN '26-Apr-2024'--:P_DATE_FROM \n" +
-                "                 AND  '25-May-2024'--:P_DATE_TO\n" +
-                "--                 AND PAPF.EMPLOYEE_NUMBER = :P_EMPLOYEE_ID\n" +
-                "        --(select user_name from fnd_user where user_id =:P_user_id)\n" +
-                "            AND \n" +
-                "                 CASE WHEN STATUS='P' THEN 'Present' WHEN STATUS ='H' THEN 'Holiday' WHEN STATUS='LV' THEN 'Leave' WHEN STATUS='A' THEN 'Absent' WHEN STATUS='L' THEN 'Late' \n" +
-                "       WHEN STATUS='O' THEN 'Offday' ELSE NULL END=NVL(:P_STATUS,CASE WHEN STATUS='P' THEN 'Present' WHEN STATUS ='H' THEN 'Holiday' WHEN STATUS='LV' THEN 'Leave' WHEN STATUS='A' THEN 'Absent' WHEN STATUS='L' THEN 'Late' \n" +
-                "       WHEN STATUS='O' THEN 'Offday' ELSE NULL END)\n" +
+                "                 AND TRUNC (XESD.WORKING_DATE) BETWEEN ?--:P_DATE_FROM \n" +
+                "                 AND  ?--:P_DATE_TO\n" +
                 "        ORDER BY XESD.WORKING_DATE, PAPF.EMPLOYEE_NUMBER ASC)) Attend\n" +
                 "where\n" +
-                "Attend.EMPLOYEE_NUMBER = leave.emp_id \n" +
+                "Attend.EMPLOYEE_NUMBER = leave.EMPLOYEE_NUMBER \n" +
                 "and Attend.status in ('Absent','Late')  \n" +
                 "and leave.STATUS_FLG <>  'Rejected'\n" +
                 "--and leave.STATUS_FLG  in ( 'Approved')\n" +
@@ -178,7 +172,8 @@ public class ApprovalHistoryDB {
                 "order by leave.entry_date asc";
         try {
             PreparedStatement st = conn.prepareStatement(query);
-            st.setString(1,"");
+            st.setString(1, startDate);
+            st.setString(2,endDate);
             ResultSet rs = st.executeQuery();
             while (rs.next()){
                 LeaveAttendance leaveAttendance = new LeaveAttendance();

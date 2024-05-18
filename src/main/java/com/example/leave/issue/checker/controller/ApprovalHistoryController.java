@@ -7,6 +7,7 @@ import com.example.leave.issue.checker.service.ApprovalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,9 +18,14 @@ import java.util.Map;
 public class ApprovalHistoryController {
     @Autowired
     private ApprovalService approvalService;
-    @GetMapping("/leave-approval")
-    public List<LeaveAttendanceKey> getTest(){
-        return approvalService.getAllApprovalHistory();
+    @GetMapping("/leave-approval-all")
+    public List<LeaveAttendanceKey> getAllApprovalHistory(@RequestParam String startDate, @RequestParam String endDate){
+        return approvalService.getAllApprovalHistory(startDate, endDate);
+    }
+
+    @GetMapping("/leave-issues-with-approval")
+    public List<LeaveAttendanceKey> getLeaveIssueApprovalHistory(@RequestParam String startDate, @RequestParam String endDate){
+        return approvalService.getLeaveIssueWithApprovalHistory(startDate, endDate);
     }
 
     @GetMapping("/leave-approval-history")

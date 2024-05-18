@@ -20,14 +20,41 @@ public class ApprovalService {
 
     }
 
-    public List<LeaveAttendanceKey> getAllApprovalHistory() {
+    public List<LeaveAttendanceKey> getAllApprovalHistory(String startDate, String endDate) {
 
-        List<LeaveAttendance> leaveAttendanceList = db.fetchLeaveAttendance();
+        List<LeaveAttendance> leaveAttendanceList = db.fetchLeaveAttendance(startDate, endDate);
 
         List<LeaveAttendanceKey> leaveAttendanceKeys = new ArrayList<>();
         for (LeaveAttendance leaveAttendance : leaveAttendanceList) {
             LeaveAttendanceKey leaveAttendanceKey = new LeaveAttendanceKey();
+            String headerId = String.valueOf(leaveAttendance.getReportHeaderId());
+            //leave approval data
+            List<ApprovalHistory> leaveApproval = db.fetchLeaveApprovalHistory(headerId);
 
+            // Only if all approvals are not pending, we add this to our list
+            leaveAttendanceKey.setReportHeaderId(leaveAttendance.getReportHeaderId());
+            leaveAttendanceKey.setEntryDate(leaveAttendance.getEntryDate());
+            leaveAttendanceKey.setStatusFlg(leaveAttendance.getStatusFlg());
+            leaveAttendanceKey.setWfItemKey(leaveAttendance.getWfItemKey());
+            leaveAttendanceKey.setEmpId(leaveAttendance.getEmpId());
+            leaveAttendanceKey.setLeaveStartDate(leaveAttendance.getLeaveEndDate());
+            leaveAttendanceKey.setLeaveEndDate(leaveAttendance.getLeaveStartDate());
+            leaveAttendanceKey.setLeaveType(leaveAttendance.getLeaveType());
+            leaveAttendanceKey.setWorkingDate(leaveAttendance.getWorkingDate());
+            leaveAttendanceKey.setStatus(leaveAttendance.getStatus());
+            leaveAttendanceKey.setActionStatus(leaveAttendance.getActionStatus());
+            leaveAttendanceKey.setApprovalHistories(leaveApproval);
+            leaveAttendanceKeys.add(leaveAttendanceKey);
+        }
+        return leaveAttendanceKeys;
+    }
+    public List<LeaveAttendanceKey> getLeaveIssueWithApprovalHistory(String startDate, String endDate) {
+
+        List<LeaveAttendance> leaveAttendanceList = db.fetchLeaveAttendance(startDate,endDate);
+
+        List<LeaveAttendanceKey> leaveAttendanceKeys = new ArrayList<>();
+        for (LeaveAttendance leaveAttendance : leaveAttendanceList) {
+            LeaveAttendanceKey leaveAttendanceKey = new LeaveAttendanceKey();
             String headerId = String.valueOf(leaveAttendance.getReportHeaderId());
             //leave approval data
             List<ApprovalHistory> leaveApproval = db.fetchLeaveApprovalHistory(headerId);
@@ -41,7 +68,7 @@ public class ApprovalService {
                 }
             }
 
-            if (allApproved) {
+            if (allApproved && leaveAttendance.getActionStatus() == null) {
                 // Only if all approvals are not pending, we add this to our list
                 leaveAttendanceKey.setReportHeaderId(leaveAttendance.getReportHeaderId());
                 leaveAttendanceKey.setEntryDate(leaveAttendance.getEntryDate());
@@ -55,11 +82,11 @@ public class ApprovalService {
                 leaveAttendanceKey.setStatus(leaveAttendance.getStatus());
                 leaveAttendanceKey.setActionStatus(leaveAttendance.getActionStatus());
                 leaveAttendanceKey.setApprovalHistories(leaveApproval);
-
                 leaveAttendanceKeys.add(leaveAttendanceKey);
             }
         }
 
         return leaveAttendanceKeys;
     }
+
 }
