@@ -37,8 +37,8 @@ public class ApprovalService {
             leaveAttendanceKey.setStatusFlg(leaveAttendance.getStatusFlg());
             leaveAttendanceKey.setWfItemKey(leaveAttendance.getWfItemKey());
             leaveAttendanceKey.setEmpId(leaveAttendance.getEmpId());
-            leaveAttendanceKey.setLeaveStartDate(leaveAttendance.getLeaveEndDate());
-            leaveAttendanceKey.setLeaveEndDate(leaveAttendance.getLeaveStartDate());
+            leaveAttendanceKey.setLeaveStartDate(leaveAttendance.getLeaveStartDate());
+            leaveAttendanceKey.setLeaveEndDate(leaveAttendance.getLeaveEndDate());
             leaveAttendanceKey.setLeaveType(leaveAttendance.getLeaveType());
             leaveAttendanceKey.setWorkingDate(leaveAttendance.getWorkingDate());
             leaveAttendanceKey.setStatus(leaveAttendance.getStatus());
@@ -75,8 +75,8 @@ public class ApprovalService {
                 leaveAttendanceKey.setStatusFlg(leaveAttendance.getStatusFlg());
                 leaveAttendanceKey.setWfItemKey(leaveAttendance.getWfItemKey());
                 leaveAttendanceKey.setEmpId(leaveAttendance.getEmpId());
-                leaveAttendanceKey.setLeaveStartDate(leaveAttendance.getLeaveEndDate());
-                leaveAttendanceKey.setLeaveEndDate(leaveAttendance.getLeaveStartDate());
+                leaveAttendanceKey.setLeaveStartDate(leaveAttendance.getLeaveStartDate());
+                leaveAttendanceKey.setLeaveEndDate(leaveAttendance.getLeaveEndDate());
                 leaveAttendanceKey.setLeaveType(leaveAttendance.getLeaveType());
                 leaveAttendanceKey.setWorkingDate(leaveAttendance.getWorkingDate());
                 leaveAttendanceKey.setStatus(leaveAttendance.getStatus());
